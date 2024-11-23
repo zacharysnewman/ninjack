@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ninjack</title>
+	<!-- Link to styles.css -->
+	<link rel="stylesheet" href="styles/styles.css">
+</head>
+<body class="noselect">
+	<h1 class="outlined">Ninjack</h1>
+	<div class="game">
+		<div class="outlined" id="goldDisplay"></div>
+		<div id="world"></div>
+	</div>
+	<div id="notification-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+	<div id="controls">
+		<button onclick="move('up')">⬆️</button>
+		<div>
+			<button class="leftright" onclick="move('left')">⬅️</button>
+			<button class="leftright" onclick="move('right')">➡️</button>
+		</div>
+		<button onclick="move('down')">⬇️</button>
+	</div>
+	<!-- Link to app.js -->
+	<script src="scripts/app.js"></script>
+</body>
+</html>
