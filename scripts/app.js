@@ -547,6 +547,15 @@ const onKeyDown = (event) => {
 
 function main() {
 	document.addEventListener('keydown', onKeyDown);
+	let lastTouchTime = 0;
+
+document.addEventListener('touchend', (e) => {
+  const now = new Date().getTime();
+  if (now - lastTouchTime <= 300) {
+    e.preventDefault(); // Prevent double-tap-to-zoom
+  }
+  lastTouchTime = now;
+});
 	resetGame();
 	alert(alertMessages.welcome);
 }
