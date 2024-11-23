@@ -1,0 +1,115 @@
+body {
+	background-color: forestgreen;
+	text-align: center;
+	position: relative;
+}
+h1 {
+	color: blue;
+	text-shadow: 2px 2px 0 black;
+}
+.outlined {
+	margin: 5px;
+	background-color: green;
+	border-radius: 10px;
+}
+.game {
+	display: inline-block;
+	font-size: 0;
+	position: relative;
+	margin-bottom: 60px;
+}
+.tile {
+	aspect-ratio: 1 / 1; /* Keep the tiles square */
+	font-size: 7vmin;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center; /* Ensure emoji is centered in the tile */
+	background-color: green;
+	border: 1px solid forestgreen; /* Set border width and color */
+	border-radius: 1px; /* Adjust border radius */
+}
+
+.player {
+	color: black;
+}
+.rock {
+	color: brown;
+}
+.gold {
+	color: yellow;
+}
+#goldDisplay {
+	font-size: 18px;
+}
+#controls {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: green;
+	padding-top: 5%;
+	padding-bottom: 5%;
+}
+button {
+	font-size: 48px;
+	background-color: darkgreen;
+	border-color: darkgrey;
+	border-radius: 10px;
+	width: auto;
+	height: auto;
+}
+
+/* Hide controls on screens wider than 768px */
+@media (min-width: 768px) {
+	#controls {
+		display: none;
+	}
+}
+
+/* Make the emoji characters unselectable on both standard and mobile browsers */
+.noselect {
+	user-select: none; /* Standard property */
+	-webkit-user-select: none; /* Prefix for some mobile browsers */
+	-webkit-touch-callout: none;
+}
+
+.leftright {
+	margin-left: 12px;
+	margin-right: 12px;
+}
+
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+#world {
+	display: grid;
+	grid-template-columns: repeat(9, 1fr); /* 9 columns of equal size */
+	grid-template-rows: repeat(9, 1fr);   /* 9 rows of equal size */
+	width: 90vmin;  /* Scale to the smaller dimension of the viewport */
+	height: 90vmin; /* Maintain a square grid */
+	max-width: 100%; /* Ensure it doesn't exceed screen size */
+	margin: auto; /* Center the grid */
+	/*background-color: darkgreen; /* Optional background */
+	/*gap: 1px; /* Add small spacing between tiles */
+}
+
+@keyframes floatUpAndFade {
+  0% {
+	transform: translateY(0);
+	opacity: 1;
+  }
+  100% {
+	transform: translateY(-100%);
+	opacity: 0;
+  }
+}
+
+.emoji-notification {
+  position: absolute;
+  font-size: 2rem;
+  animation: floatUpAndFade 0.8s ease-out; /* Duration and easing */
+  pointer-events: none; /* Ensures no interaction */
+}
