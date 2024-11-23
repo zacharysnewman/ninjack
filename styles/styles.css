@@ -58,6 +58,7 @@ button {
 	border-radius: 10px;
 	width: auto;
 	height: auto;
+	touch-action: manipulation;
 }
 
 /* Hide controls on screens wider than 768px */
