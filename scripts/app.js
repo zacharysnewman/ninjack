@@ -48,7 +48,7 @@ const alertMessages = {
 	welcome: `Welcome to Ninjack ${VERSION}! A rogue-like puzzlish dungeon crawler game! Let me know if you find any bugs! And good luck!\n\nCan you escape Level 10 of the Forest?`,
 	nextLevel: 'Next level!',
 	death: () => `You died 💀 on Level ${currentLevel}!`,
-	win: 'You win!'
+	win: `You win! You scored 💰{gold}!`
 };
 
 /* World Constants */
