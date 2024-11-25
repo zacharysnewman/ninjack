@@ -9,7 +9,6 @@
 let playerX, playerY, centerTile, gold, swords, currentLootTable, currentLootIndex, currentTileTable;
 
 /* Constants */
-const VERSION = "6.0";
 const SNAKE = "🐍";
 const ROCK = "🪨";
 const TREE = "🌲";
@@ -46,7 +45,7 @@ let buttonsDisabled = false;
 
 /* Alert Messages */
 const alertMessages = {
-	welcome: `Welcome to Ninjack ${VERSION}! A rogue-like puzzle-ish dungeon crawler game! Let me know if you love it or have any issues! And good luck!\n\nCan you escape Level 🚪10 of the Forest?`,
+	welcome: `Welcome to Ninjack! A rogue-like puzzle-ish dungeon crawler game! Let me know if you love it or have any issues! And good luck!\n\nCan you escape Level 🚪10 of the Forest?`,
 	nextLevel: 'Next level!',
 	death: () => `You died 💀 on Level ${currentLevel}!`,
 	win: () => `Take a screenshot! 📸\nYou escaped the Forest!\n\nFinal score:\n💰${gold} Gold\n⏺️${currentMoves} Moves\n🕥${timer.value()} Seconds\n\nReady to beat your score?`
