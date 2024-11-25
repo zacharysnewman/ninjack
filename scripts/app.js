@@ -614,7 +614,7 @@ function resetGame(newGame = true) {
 		timer.start();
 	} else {
 		snakesCount += 1;
-		if(currentLevel === 1) {
+		if(currentLevel === 9) {
 			chuteCount = 1;
 			doorCount = 0;
 			keyCount = 0;
