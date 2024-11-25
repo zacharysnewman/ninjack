@@ -37,6 +37,7 @@ let currentLevel = startingLevel;
 let currentHealth = maxHealth;
 let currentKeys = 0;
 let currentChutes = 0;
+let currentMoves = 0;
 let snakesCount = startingSnakesCount;
 let snakes = [];
 let rocks = [];
@@ -45,10 +46,10 @@ let buttonsDisabled = false;
 
 /* Alert Messages */
 const alertMessages = {
-	welcome: `Welcome to Ninjack ${VERSION}! A rogue-like puzzlish dungeon crawler game! Let me know if you find any bugs! And good luck!\n\nCan you escape Level 10 of the Forest?`,
+	welcome: `Welcome to Ninjack ${VERSION}! A rogue-like puzzle-ish dungeon crawler game! Let me know if you love it or have any issues! And good luck!\n\nCan you escape Level 🚪10 of the Forest?`,
 	nextLevel: 'Next level!',
 	death: () => `You died 💀 on Level ${currentLevel}!`,
-	win: `You win! You scored 💰${gold}!`
+	win: () => `Take a screenshot! 📸\nYou escaped the Forest!\n\nFinal score:\n💰${gold} Gold\n⏺️${currentMoves} Moves\n🕥${timer.value()} Seconds\n\nReady to beat your score?`
 };
 
 /* World Constants */
@@ -56,13 +57,91 @@ const worldSize = 9;
 const totalTiles = worldSize * worldSize;
 const rockCount = 15;
 const holeCount = 1;
-const treeCount = totalTiles - 1 - holeCount - rockCount;
+const playerCount = 1;
+const treeCount = totalTiles - playerCount - holeCount - rockCount;
 
 /* lootTable */
-const playerCount = 1;
 const swordsCount = 5;
 const goldBagsCount = 7;
 const gemCount = 1;
+
+/* START Timer Class */
+class Timer {
+  constructor() {
+	this.seconds = 0; // Keeps track of elapsed seconds
+	this.interval = null; // Stores the interval ID
+	this.timeUpdateCallback = null; // Callback for time updates
+  }
+
+  start() {
+	if (this.interval) {
+	  console.warn('Timer is already running.');
+	  return;
+	}
+	this.interval = setInterval(() => {
+	  this.seconds++;
+	  if (this.timeUpdateCallback) {
+		this.timeUpdateCallback(this.seconds); // Call the time update callback
+	  }
+	}, 1000);
+  }
+
+  stop() {
+	if (!this.interval) {
+	  console.warn('Timer is not running.');
+	  return;
+	}
+	clearInterval(this.interval);
+	this.interval = null;
+  }
+
+  reset() {
+	this.stop();
+	this.seconds = 0;
+  }
+
+  value() {
+	return this.seconds;
+  }
+
+  setTimeUpdateCallback(callback) {
+	if (typeof callback === 'function') {
+	  this.timeUpdateCallback = callback;
+	} else {
+	  console.error('Provided callback is not a function.');
+	}
+  }
+
+  clearTimeUpdateCallback() {
+	this.timeUpdateCallback = null;
+  }
+}
+/* END Timer Class */
+const timer = new Timer();
+timer.setTimeUpdateCallback(updateGoldDisplay);
+
+// Function to show a modal and wait for user confirmation
+async function showModal(bodyText) {
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <p>${bodyText}</p>
+      <button class="modal-button" id="modal-ok">OK</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Return a promise that resolves when the modal is dismissed
+  return new Promise((resolve) => {
+    modal.querySelector('#modal-ok').onclick = () => {
+      document.body.removeChild(modal);
+      resolve(true);
+    };
+  });
+}
+
+
 
 function fisherYatesShuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -129,9 +208,11 @@ function generateWorld() {
 }
 
 function updateGoldDisplay() {
-	const goldDisplay = document.getElementById('goldDisplay');
-	const chutesText = currentChutes > 0 ? ` 🪂${currentChutes}` : '';
-	goldDisplay.textContent = `🚪${currentLevel} ❤️${currentHealth} 🔑${currentKeys} 🗡${swords} 💰${gold}${chutesText}`;
+	const inventory = document.getElementById('inventory');
+	const stats = document.getElementById('stats');
+	const dynamicText = currentChutes > 0 ? ` 🪂${currentChutes}` : `🔑${currentKeys}`;
+	inventory.textContent = `🚪${currentLevel} ❤️${currentHealth} 🗡${swords}${dynamicText}`;
+	stats.textContent = `💰${gold} ⏺️${currentMoves} 🕥${timer.value()}`;
 }
 		
 function hasClass(tile, className) {
@@ -309,7 +390,30 @@ function enableButtons() {
 	buttonsDisabled = false;
 }
 
+function checkForMissingKey() {
+	const allTrees = document.querySelectorAll('.' + TREE);
+	if(allTrees.length > 0) {
+		return;
+	}
+	
+	const allKeys = document.querySelectorAll('.' + KEY);
+	const key = allKeys[0];
+	
+	if(key && key.textContent !== KEY) {
+		key.textContent = KEY;
+		return;
+	}
+	
+   	if(doorLocked && currentKeys < 1 && !key) {
+		currentKeys = 1;
+		updateGoldDisplay();
+   	}
+}
+
 function move(direction) {
+	checkForMissingKey();
+	currentMoves += 1;
+	updateGoldDisplay();
 	const currentTile = document.querySelector(`.tile.${NINJA}`);
 	let shouldEndGame = false;
 	const { newTile, newX, newY } = getNewTileInDirection(direction, playerX, playerY);
@@ -457,13 +561,14 @@ function handleDamage(damage, currentTile) {
 }
 
 function handleDeath(currentTile) {
+	timer.stop();
 	setTile(currentTile, '');
 	removeClass(currentTile, NINJA);
 
 	const delay = 1000;
 	disableButtons();
-	setTimeout(() => {
-		confirm(alertMessages.death());
+	setTimeout(async () => {
+		await showModal(alertMessages.death());
 		resetGame();
 		enableButtons();
 	}, delay);
@@ -479,10 +584,11 @@ function handleFinalBoss() {
 }
 
 function handleWin() {
+	timer.stop();
 	const delay = 1000;
 	disableButtons();
-	setTimeout(() => {
-		confirm(alertMessages.win);
+	setTimeout(async () => {
+		await showModal(alertMessages.win());
 		resetGame();
 		enableButtons();
 	}, delay);
@@ -502,10 +608,13 @@ function resetGame(newGame = true) {
 		currentHealth = maxHealth;
 		currentLevel = startingLevel;
 		currentChutes = 0;
+		currentMoves = 0;
 		snakesCount = startingSnakesCount;
+		timer.reset();
+		timer.start();
 	} else {
 		snakesCount += 1;
-		if(currentLevel === 9) {
+		if(currentLevel === 1) {
 			chuteCount = 1;
 			doorCount = 0;
 			keyCount = 0;
@@ -545,10 +654,12 @@ const onKeyDown = (event) => {
 	}
 };
 
-function main() {
+async function main() {
 	document.addEventListener('keydown', onKeyDown);
 	resetGame();
-	alert(alertMessages.welcome);
+	timer.stop();
+	await showModal(alertMessages.welcome);
+	resetGame();
 }
 
 main();
