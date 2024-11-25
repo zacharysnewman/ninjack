@@ -655,6 +655,9 @@ const onKeyDown = (event) => {
 };
 
 async function main() {
+	document.addEventListener('contextmenu', function (event) {
+  event.preventDefault(); // Prevents the context menu from appearing
+});
 	document.addEventListener('keydown', onKeyDown);
 	resetGame();
 	timer.stop();
