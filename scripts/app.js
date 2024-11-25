@@ -641,15 +641,19 @@ const onKeyDown = (event) => {
 	switch (event.key) {
 		case 'ArrowUp': // Up arrow key
 			move('up');
+			event.preventDefault();
 			break;
 		case 'ArrowLeft': // Left arrow key
 			move('left');
+			event.preventDefault();
 			break;
 		case 'ArrowRight': // Right arrow key
 			move('right');
+			event.preventDefault();
 			break;
 		case 'ArrowDown': // Down arrow key
 			move('down');
+			event.preventDefault();
 			break;
 	}
 };
